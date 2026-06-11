@@ -1,232 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Job Portal Dashboard</title>
-
-  <style>
-    body { font-family: Arial; background:#0f172a; color:white; }
-    h1 { text-align:center; }
-    .container { display:flex; gap:20px; padding:20px; }
-    .card { background:#1e293b; padding:20px; border-radius:10px; width:33%; }
-    input, select { width:100%; padding:8px; margin:5px 0; }
-    button { padding:6px 10px; margin:3px; border:none; cursor:pointer; }
-    .add { background:#22c55e; }
-    .delete { background:#ef4444; }
-    .item { padding:5px; border-bottom:1px solid #334155; }
-  </style>
+	<meta charset="UTF-8">
+    <title>Job Portal</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<h1>Job Portal Dashboard</h1>
+<header>
+    <h1>🚀 Job Portal System</h1>
+</header>
 
-<div class="container">
+<nav>
+    <a href="users.html">👤 Users</a>
+    <a href="jobs.html">💼 Jobs</a>
+    <a href="applications.html">📄 Applications</a>
+</nav>
 
-<!-- ================= USER ================= -->
-<div class="card">
-<h2>Users</h2>
-
-<input id="name" placeholder="Name">
-<input id="email" placeholder="Email">
-<button class="add" onclick="createUser()">Add</button>
-
-<input id="searchName" placeholder="Search by name">
-<button onclick="searchUser()">Search</button>
-
-<div id="userList"></div>
-</div>
-
-<!-- ================= JOB ================= -->
-<div class="card">
-<h2>Jobs</h2>
-
-<input id="title" placeholder="Title">
-<input id="desc" placeholder="Description">
-<input id="salary" placeholder="Salary">
-<button class="add" onclick="createJob()">Add</button>
-
-<input id="searchTitle" placeholder="Search Title">
-<button onclick="searchJob()">Search</button>
-
-<div id="jobList"></div>
-</div>
-
-<!-- ================= APPLICATION ================= -->
-<div class="card">
-<h2>Apply Job</h2>
-
-<select id="userSelect"></select>
-<select id="jobSelect"></select>
-
-<button class="add" onclick="applyJob()">Apply</button>
-
-<h3>Applications</h3>
-<div id="appList"></div>
-</div>
-
-</div>
+<section class="home">
+    <h2>Welcome to Job Portal</h2>
+    <p>Find your dream job with ease 💼</p>
+    <button onclick="goToJobs()">Explore Jobs</button>
+</section>
 
 <script>
-
-const BASE="http://localhost:8080/api";
-
-// ================= USERS =================
-function loadUsers(){
- fetch(BASE+"/users")
- .then(r=>r.json())
- .then(data=>{
-  let list=document.getElementById("userList");
-  let select=document.getElementById("userSelect");
-
-  list.innerHTML=""; select.innerHTML="";
-
-  data.forEach(u=>{
-    list.innerHTML+=`
-    <div class="item">
-      ${u.id} - ${u.name}
-      <button onclick="deleteUser(${u.id})">X</button>
-    </div>`;
-    select.innerHTML+=`<option value="${u.id}">${u.name}</option>`;
-  });
- });
+function goToJobs(){
+    window.location.href="jobs.html";
 }
-
-function createUser(){
- let user={
-  name:document.getElementById("name").value,
-  email:document.getElementById("email").value
- };
-
- fetch(BASE+"/users",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(user)})
- .then(()=>loadUsers());
-}
-
-function deleteUser(id){
- fetch(BASE+"/users/"+id,{method:"DELETE"})
- .then(()=>loadUsers());
-}
-
-function searchUser(){
- let name=document.getElementById("searchName").value;
-
- fetch(BASE+"/users/name/"+name)
- .then(r=>r.json())
- .then(data=>{
-  let list=document.getElementById("userList");
-  list.innerHTML="";
-  data.forEach(u=>{
-    list.innerHTML+=`<div class="item">${u.id} - ${u.name}</div>`;
-  });
- });
-}
-
-// ================= JOB =================
-function loadJobs(){
- fetch(BASE+"/jobs")
- .then(r=>r.json())
- .then(data=>{
-  let list=document.getElementById("jobList");
-  let select=document.getElementById("jobSelect");
-
-  list.innerHTML=""; select.innerHTML="";
-
-  data.forEach(j=>{
-    list.innerHTML+=`
-    <div class="item">
-      ${j.id} - ${j.title}
-      <button onclick="deleteJob(${j.id})">X</button>
-    </div>`;
-    select.innerHTML+=`<option value="${j.id}">${j.title}</option>`;
-  });
- });
-}
-
-function createJob(){
- let job={
-  title:document.getElementById("title").value,
-  description:document.getElementById("desc").value,
-  salary:document.getElementById("salary").value
- };
-
- fetch(BASE+"/jobs",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(job)})
- .then(()=>loadJobs());
-}
-
-function deleteJob(id){
- fetch(BASE+"/jobs/"+id,{method:"DELETE"})
- .then(()=>loadJobs());
-}
-
-function searchJob(){
- let title=document.getElementById("searchTitle").value;
-
- fetch(BASE+"/jobs/title/"+title)
- .then(r=>r.json())
- .then(data=>{
-  let list=document.getElementById("jobList");
-  list.innerHTML="";
-  data.forEach(j=>{
-    list.innerHTML+=`<div class="item">${j.id} - ${j.title}</div>`;
-  });
- });
-}
-
-// ================= APPLICATION =================
-function loadApps(){
- fetch(BASE+"/applications")
- .then(r=>r.json())
- .then(data=>{
-  let list=document.getElementById("appList");
-  list.innerHTML="";
-
-  data.forEach(a=>{
-    list.innerHTML+=`
-    <div class="item">
-      ${a.id} | User:${a.userId} | Job:${a.jobId}
-
-      <select id="s${a.id}">
-        <option ${a.status=='APPLIED'?'selected':''}>APPLIED</option>
-        <option ${a.status=='SELECTED'?'selected':''}>SELECTED</option>
-        <option ${a.status=='REJECTED'?'selected':''}>REJECTED</option>
-      </select>
-
-      <button onclick="updateStatus(${a.id})">Update</button>
-      <button onclick="deleteApp(${a.id})">X</button>
-    </div>`;
-  });
- });
-}
-
-function applyJob(){
- let app={
-  userId:document.getElementById("userSelect").value,
-  jobId:document.getElementById("jobSelect").value,
-  status:"APPLIED"
- };
-
- fetch(BASE+"/applications",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(app)})
- .then(()=>loadApps());
-}
-
-function updateStatus(id){
- let status=document.getElementById("s"+id).value;
-
- fetch(BASE+"/applications/"+id+"/status?status="+status,{
-   method:"PUT"
- })
- .then(()=>loadApps());
-}
-
-function deleteApp(id){
- fetch(BASE+"/applications/"+id,{method:"DELETE"})
- .then(()=>loadApps());
-}
-
-// ================= INIT =================
-loadUsers();
-loadJobs();
-loadApps();
-
 </script>
 
 </body>

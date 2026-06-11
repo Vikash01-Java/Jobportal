@@ -1,10 +1,7 @@
 package com.jobportal.service.imp;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
 import com.jobportal.dto.ApplicationDto;
 import com.jobportal.dto.JobDto;
 import com.jobportal.dto.UserDto;
@@ -53,6 +50,15 @@ public class JobServiceImpl implements JobService{
 public UserDto getUserById(Long id) {
 	User user = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found"));
 	return UserMapper.toDto(user);
+	
+//	Optional<User> optionalUser = userRepository.findById(id);
+//
+//	if(optionalUser.isPresent()) {
+//	    User user = optionalUser.get(); 
+//	    return UserMapper.toDto(user);
+//	} else {
+//	    throw new ResourceNotFoundException("User not found");
+//	}
 }
 @Override
 public UserDto updateUser(Long id, UserDto userDto) {
@@ -69,10 +75,22 @@ public String deleteUser(Long id){
 	return "User is successfully removed";
 }
 
-@Override
+@Override  
 public List<UserDto> getUserByName(String name) {
 	List<User> user = userRepository.findByName(name);
 	return user.stream().map(UserMapper::toDto).collect(Collectors.toList());
+	
+	
+//	List<User> users = userRepository.findByName(name);
+//
+//	List<UserDTO> dtoList = new ArrayList<>();
+//  
+//	for(int i = 0; i < users.size(); i++) {
+//	    User u = users.get(i);
+//	    dtoList.add(UserMapper.toDto(u));
+//	}
+//
+//	return dtoList;
 }
 //================= JOB =================
 @Override
@@ -124,7 +142,7 @@ public List<JobDto> getJobsBySalaryGreaterThan(Double salary) {
 // ================= APPLICATION =================
 @Override 
 	public ApplicationDto applyJob(ApplicationDto applicationDto) {
-		User user = userRepository.findById(applicationDto.getJobId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		User user = userRepository.findById(applicationDto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		Job job = jobRepository.findById(applicationDto.getJobId()).orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
 		Application app = new Application();

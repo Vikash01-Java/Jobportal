@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Jobs</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>💼 Job Management</h2>
+
+<div class="card">
+    <input type="text" id="title" placeholder="Job Title">
+    <input type="text" id="description" placeholder="Description">
+    <input type="number" id="salary" placeholder="Salary">
+    <button onclick="createJob()">Add Job</button>
+	
+    <input type="text" id="searchTitle" placeholder="Search by Title">
+    <button onclick="searchJob()">Search</button>
+	
+	<select id="userSelect"></select>
+</div>
+
+<hr>
+
+<h3>🔍 Search Job By ID</h3>
+<input type="number" id="jobIdSearch" placeholder="Enter Job ID">
+<button onclick="getJobById()">Search</button>
+
+<h3>💰 Salary Filter</h3>
+<input type="number" id="salarySearch" placeholder="Enter Min Salary">
+<button onclick="getJobsBySalary()">Filter</button>
+
+<h3>🔎 Search by Title</h3>
+<input type="text" id="searchTitle" placeholder="Enter Title">
+<button onclick="searchJob()">Search</button>
+
+<div id="jobList"></div>
+
+<script src="js/app.js"></script>
+<script>loadJobs();</script>
+
+
+<script>
+    loadJobs();
+    loadUserDropdown();
+</script>
+
+</body>
+</html>
